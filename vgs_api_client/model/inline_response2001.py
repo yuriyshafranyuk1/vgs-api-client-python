@@ -63,6 +63,10 @@ class InlineResponse2001(ModelNormal):
     }
 
     validations = {
+        ('data',): {
+            'max_items': 1,
+            'min_items': 1,
+        },
     }
 
     @cached_property

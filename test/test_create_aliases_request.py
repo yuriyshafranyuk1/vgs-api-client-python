@@ -13,6 +13,10 @@ import sys
 import unittest
 
 import vgs_api_client
+from vgs_api_client.model.create_aliases_request_existing import CreateAliasesRequestExisting
+from vgs_api_client.model.create_aliases_request_new import CreateAliasesRequestNew
+globals()['CreateAliasesRequestExisting'] = CreateAliasesRequestExisting
+globals()['CreateAliasesRequestNew'] = CreateAliasesRequestNew
 from vgs_api_client.model.create_aliases_request import CreateAliasesRequest
 
 

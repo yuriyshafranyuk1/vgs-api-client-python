@@ -1,64 +1,184 @@
 """
-    Vault HTTP API
+    Very Good Security (VGS) API
 
-    Storing, retrieving, and managing sensitive data within a VGS organization.  **NOTE:** _The Vault API is intended only for environments that are already PCI-compliant. If you want to use this API, but are not yet PCI-compliant, you can use [VGS Collect](https://www.verygoodsecurity.com/docs/vgs-collect/what-is-it) or VGS Proxy with [Inbound Routes](https://www.verygoodsecurity.com/docs/getting-started/quick-integration#securing-inbound-connection) to quickly and seamlessly achieve compliance._  Looking for the old version of the API? Find it [here](https://www.verygoodsecurity.com/docs/api/1/vault).  # Introduction  Each encrypted value stored in a VGS vault has one or multiple _aliases_ associated with it. These aliases are fully opaque and retain no information about the underlying data. The user may safely store aliases without compromising data security.  **NOTE:** The API works with persistent storage only. Unlike volatile storage, this means that the data is stored permanently, without any implicit TTL.  Aliases are not valuable on their own. However, they can be used to decrypt the associated value and pass it to another service via the [forward proxy](https://www.verygoodsecurity.com/docs/guides/outbound-connection).  ## Alias Formats  Each alias corresponds to a certain format. There are several alias formats suitable for different kinds of sensitive data.  For example, `UUID` produces a random Base58-encoded UUID string with an environment-dependent prefix:  ``` tok_sandbox_bhtsCwFUzoJMw9rWUfEV5e ```  This format is generic and suitable for any kind of data.  The tables below contain descriptions of all alias formats recognized by the API.  ### Generic Formats  | Value                   | Description                                           | |-------------------------|-------------------------------------------------------| | `NUM_LENGTH_PRESERVING` | Length-Preserving, Numeric                            | | `RAW_UUID`              | UUID                                                  | | `UUID`                  | UUID (Prefixed, Base58-Encoded)                       | | `GENERIC_T_FOUR`        | UUID (Prefixed, Base58-Encoded, Last four preserving) |  ### Account Number Formats  | Value                             | Description                          | |-----------------------------------|--------------------------------------| | `FPE_ACC_NUM_T_FOUR`              | Length-Preserving, Numeric (A4)      | | `FPE_ALPHANUMERIC_ACC_NUM_T_FOUR` | Length-Preserving, Alphanumeric (A4) |   ### Payment Card Formats  | Value            | Description                                 | |------------------|---------------------------------------------| | `FPE_SIX_T_FOUR` | Format-Preserving, Luhn Valid (6T4)         | | `FPE_T_FOUR`     | Format-Preserving, Luhn Valid (T4)          | | `PFPT`           | Prefixed, Luhn Valid, 19-Digit Fixed Length |  ### SSN Formats  | Value            | Description            | |------------------|------------------------| | `FPE_SSN_T_FOUR` | Format-Preserving (A4) |  # Authentication  This API uses `Basic` authentication.  Credentials to access the API can be generated on the [dashboard](https://dashboard.verygoodsecurity.com) by going to the Settings section of the vault of your choosing.  [Docs » Guides » Access credentials](https://www.verygoodsecurity.com/docs/settings/access-credentials)  # Rate Limiting  The API allows up to 3,000 requests per minute. Requests are associated with the vault, regardless of the access credentials used to authenticate the request.  Your current rate limit is included as HTTP headers in every API response:  | Header Name             | Description                                              | |-------------------------|----------------------------------------------------------| | `x-ratelimit-remaining` | The number of requests remaining in the 1-minute window. |  If you exceed the rate limit, the API will reject the request with HTTP [429 Too Many Requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429).  # Errors  The API uses standard HTTP status codes to indicate whether the request succeeded or not.  In case of failure, the response body will be JSON in a predefined format. For example, trying to create too many aliases at once results in the following response:  ```json {     \"errors\": [         {             \"status\": 400,             \"title\": \"Bad request\",             \"detail\": \"Too many values (limit: 20)\",             \"href\": \"https://api.sandbox.verygoodvault.com/aliases\"         }     ] } ```   # noqa: E501
+    The VGS API is organized around REST. Our API is built with a predictable resource-oriented structure, uses JSON-encoded requests and responses, follows standard HTTP verbs/responses, and uses industry standard authentication.   # noqa: E501
 
-    The version of the OpenAPI document: 1.0.0
+    The version of the OpenAPI document: 1.1
     Contact: support@verygoodsecurity.com
     Generated by: https://openapi-generator.tech
 """
 
+import os
+import re
+from pprint import pprint
 
-import unittest
-
+import pytest
 import vgs_api_client
-from vgs_api_client.api.aliases_api import AliasesApi  # noqa: E501
+from vgs_api_client.api import aliases_api
+from vgs_api_client.model.alias_format import AliasFormat
+from vgs_api_client.model.create_aliases_request import CreateAliasesRequest
+from vgs_api_client.model.create_aliases_request_new import CreateAliasesRequestNew
+from vgs_api_client.model.update_alias_request import UpdateAliasRequest
+from vgs_api_client.model.update_alias_request_data import UpdateAliasRequestData
+
+# Defining the host is optional and defaults to https://api.sandbox.verygoodvault.com
+# See configuration.py for a list of all supported configuration parameters.
+configuration = vgs_api_client.Configuration(
+    host=os.environ.get("VAULT_API_BASE_URI", "https://api.sandbox.verygoodvault.com")
+)
+
+# The client must configure the authentication and authorization parameters
+# in accordance with the API server security policy.
+# Examples for each auth method are provided below, use the example that
+# satisfies your auth use case.
+
+# Configure HTTP basic authorization: basicAuth
+configuration = vgs_api_client.Configuration(
+    username=os.environ["VAULT_API_USERNAME"], password=os.environ["VAULT_API_PASSWORD"]
+)
 
 
-class TestAliasesApi(unittest.TestCase):
-    """AliasesApi unit test stubs"""
-
-    def setUp(self):
-        self.api = AliasesApi()  # noqa: E501
-
-    def tearDown(self):
-        pass
-
-    def test_create_aliases(self):
-        """Test case for create_aliases
-
-        Create aliases  # noqa: E501
-        """
-        pass
-
-    def test_delete_alias(self):
-        """Test case for delete_alias
-
-        Delete alias  # noqa: E501
-        """
-        pass
-
-    def test_reveal_alias(self):
-        """Test case for reveal_alias
-
-        Reveal single alias  # noqa: E501
-        """
-        pass
-
-    def test_reveal_multiple_aliases(self):
-        """Test case for reveal_multiple_aliases
-
-        Reveal multiple aliases  # noqa: E501
-        """
-        pass
-
-    def test_update_alias(self):
-        """Test case for update_alias
-
-        Update data classifiers  # noqa: E501
-        """
-        pass
+@pytest.fixture
+def configured_api():
+    with vgs_api_client.ApiClient(configuration) as api_client:
+        yield api_client
 
 
-if __name__ == '__main__':
-    unittest.main()
+@pytest.fixture
+def configured_aliases_api(configured_api):
+    return aliases_api.AliasesApi(configured_api)
+
+
+@pytest.fixture
+def create_alias_request():
+    return CreateAliasesRequest(
+        data=[
+            CreateAliasesRequestNew(
+                format=AliasFormat("UUID"), value="4111-1111-1111-1111", classifiers=["credit-card"]
+            )
+        ],
+    )  # CreateAliasesRequest |  (optional)
+
+
+@pytest.fixture
+def create_aliases_request():
+    return CreateAliasesRequest(
+        data=[
+            CreateAliasesRequestNew(
+                format=AliasFormat("UUID"), value="122105155", classifiers=["bank-account"]
+            ),
+            CreateAliasesRequestNew(
+                format=AliasFormat("UUID"), value="122105156", classifiers=["bank-account"]
+            ),
+        ],
+    )  # CreateAliasesRequest |  (optional)
+
+
+@pytest.fixture
+def update_alias_request():
+    return UpdateAliasRequest(
+        UpdateAliasRequestData(classifiers=["visa-credit-card", "personal-data"])
+    )  # UpdateAliasesRequest |  (optional)
+
+
+"""AliasesApi unit test stubs"""
+
+
+def test_create_aliases(configured_aliases_api, create_aliases_request):
+    """Test case for create_aliases
+
+    Create aliases  # noqa: E501
+    """
+    try:
+        api_response = configured_aliases_api.create_aliases(
+            create_aliases_request=create_aliases_request
+        )
+
+        pprint(api_response)
+    except vgs_api_client.ApiException:
+        raise
+
+    assert len(api_response["data"]) == 2
+    for index, fixture in enumerate(["122105155", "122105156"]):
+        assert api_response["data"][index]["value"] == fixture
+        assert "bank-account" in api_response["data"][index]["classifiers"]
+        assert re.match(r"tok_sandbox_.+", api_response["data"][index]["aliases"][0]["alias"])
+
+
+def test_delete_alias(configured_aliases_api, create_alias_request):
+    """Test case for delete_alias
+
+    Delete alias  # noqa: E501
+    """
+    api_response = configured_aliases_api.create_aliases(
+        create_aliases_request=create_alias_request
+    )
+
+    pprint(create_aliases_request)
+    asserts = 0
+    for result in api_response["data"]:
+        for alias in result["aliases"]:
+            deleted = configured_aliases_api.delete_alias(alias["alias"])
+            assert deleted is None
+            asserts += 1
+    assert asserts == 1
+
+
+def test_reveal_alias(configured_aliases_api, create_alias_request):
+    """Test case for reveal_alias
+
+    Reveal single alias  # noqa: E501
+    """
+    api_response = configured_aliases_api.create_aliases(
+        create_aliases_request=create_alias_request
+    )
+    asserts = 0
+    for result in api_response["data"]:
+        for alias in result["aliases"]:
+            revealed = configured_aliases_api.reveal_alias(alias["alias"])
+            assert len(revealed["data"])
+            assert revealed["data"][0]["value"]
+            assert "credit-card" in revealed["data"][0]["classifiers"]
+            asserts += 1
+    assert asserts == 1
+
+
+def test_reveal_multiple_aliases(configured_aliases_api, create_aliases_request):
+    """Test case for reveal_multiple_aliases
+
+    Reveal multiple aliases  # noqa: E501
+    """
+    api_response = configured_aliases_api.create_aliases(
+        create_aliases_request=create_aliases_request
+    )
+    revealed = configured_aliases_api.reveal_multiple_aliases(
+        ",".join(
+            [api_response.data[0].aliases[0]["alias"], api_response.data[1].aliases[0]["alias"]]
+        )
+    )
+    asserts = 0
+    for result in revealed.data:
+        assert len(revealed.data[result]["aliases"])
+        assert revealed.data[result]["value"]
+        assert "bank-account" in revealed.data[result]["classifiers"]
+        asserts += 1
+    assert asserts == 2
+
+
+def test_update_alias(configured_aliases_api, create_alias_request, update_alias_request):
+    """Test case for update_alias
+
+    Update data classifiers  # noqa: E501
+    """
+    api_response = configured_aliases_api.create_aliases(
+        create_aliases_request=create_alias_request
+    )
+    asserts = 0
+    for result in api_response["data"]:
+        for alias in result["aliases"]:
+            updated = configured_aliases_api.update_alias(
+                alias["alias"], update_alias_request=update_alias_request
+            )
+            assert updated is None
+            asserts += 1
+    assert asserts == 1
