@@ -10,4 +10,4 @@ RUN pip install --upgrade build twine wheel setuptools --verbose
 
 WORKDIR /src
 
-ENTRYPOINT ["bash", "docker/build_and_publish.sh"]
+ENTRYPOINT ["bash", "publish/build_and_publish.sh"]
