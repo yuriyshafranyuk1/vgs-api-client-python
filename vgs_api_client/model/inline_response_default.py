@@ -63,6 +63,9 @@ class InlineResponseDefault(ModelNormal):
     }
 
     validations = {
+        ('errors',): {
+            'min_items': 1,
+        },
     }
 
     @cached_property

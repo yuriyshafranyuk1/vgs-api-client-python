@@ -61,5 +61,4 @@ vgs_api_client/model/update_alias_request.py
 vgs_api_client/model/update_alias_request_data.py
 vgs_api_client/model_utils.py
 vgs_api_client/models/__init__.py
-vgs_api_client/models/__init__.py
 vgs_api_client/rest.py
