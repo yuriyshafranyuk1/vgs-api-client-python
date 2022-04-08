@@ -53,7 +53,7 @@ with vgs_api_client.ApiClient(configuration) as api_client:
     api_instance = aliases_api.AliasesApi(api_client)
     create_aliases_request = CreateAliasesRequest(
         data=[
-            None,
+            ,
         ],
     ) # CreateAliasesRequest |  (optional)
 

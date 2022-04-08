@@ -3,16 +3,19 @@ version: '3.7'
 services:
   build_and_publish:
     build:
-      context: docker
-      dockerfile: Dockerfile
+      context: publish
       args:
         PYPI_TOKEN: ${PYPI_TOKEN}
         LIB_VERSION: ${LIB_VERSION}
     volumes:
       - ./:/src/
+
   test:
     build:
-      context: docker
-      dockerfile: Dockerfile.test
-    volumes:
-      - ./:/src/
+      context: .
+      dockerfile: test/Dockerfile
+    environment:
+      VAULT_API_USERNAME: US7oyrzRGmaKqi3ET8eSsECS
+      VAULT_API_PASSWORD: c06cf6d1-a35e-439d-91d1-8bd04e5fd9e5
+      VAULT_API_BASE_URI: https://api.sandbox.verygoodvault.com
+      VAULT_API_VAULT_ID: tntkxfmsefj

@@ -34,7 +34,7 @@ setup(
     author_email="support@verygoodsecurity.com",
     url="",
     keywords=["VGS", "VeryGoodSecurity", "Vault HTTP API"],
-    python_requires=">=3.6",
+    python_requires="",
     install_requires=REQUIRES,
     packages=find_packages(exclude=["test", "tests"]),
     include_package_data=True,
