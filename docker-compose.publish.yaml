@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+  build_and_publish:
+    build:
+      context: publish
+      args:
+        PYPI_TOKEN: ${PYPI_TOKEN}
+        LIB_VERSION: ${LIB_VERSION}
+    volumes:
+      - ./:/src/
