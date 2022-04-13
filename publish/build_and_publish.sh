@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pushd /lib/src/vgs_api_client/v1/
+pushd /lib/src/v1/
   grep -rl XXX.YYY.ZZZ . | xargs sed -i "s/XXX.YYY.ZZZ/${LIB_VERSION}/g"
 
   # Build
