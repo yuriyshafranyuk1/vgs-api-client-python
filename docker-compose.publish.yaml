@@ -4,7 +4,7 @@ services:
   build_and_publish:
     build:
       context: .
-      dockerfile: scripts/publish/Dockerfile
+      dockerfile: publish/Dockerfile
     environment:
       ARTIFACT_REPOSITORY_TOKEN: ${ARTIFACT_REPOSITORY_TOKEN}
       LIB_VERSION: ${LIB_VERSION}

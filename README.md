@@ -14,11 +14,11 @@ pip install vgs-api-client
 
 ### Development
 
-Follow [Development](Development.md) instruction.
+Follow [DEVELOPMENT](DEVELOPMENT.md) instruction.
 
 ### Development
 
-Follow [Release](Release.md) instruction.
+Follow [RELEASE](RELEASE.md) instruction.
 
 ### Documentation
 
