@@ -77,7 +77,7 @@ class ApiClient(object):
             self.default_headers[header_name] = header_value
         self.cookie = cookie
         # Set default User-Agent.
-        self.user_agent = '{{ user_agent_client_name }}{{ library_version }}{{ language_name }}/XXX.YYY.ZZZ/python'
+        self.user_agent = 'vgs-api-client/XXX.YYY.ZZZ/python'
 
     def __enter__(self):
         return self

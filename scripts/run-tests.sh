@@ -1,4 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-docker-compose -f docker-compose.tests.yaml build test
-docker-compose -f docker-compose.tests.yaml run test
+set -e
+
+docker-compose build && \
+docker-compose run assemble && \
+docker-compose run test

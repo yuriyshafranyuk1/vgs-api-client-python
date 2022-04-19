@@ -4,7 +4,7 @@ In order to release version of new library you have to create github release.
 
 ### Versioning
 
-Libraries that have versions that follows SemVer versioning schema will be released.
+Libraries that have versions that follow SemVer versioning schema will be released.
 
 ### Release
 

@@ -2,7 +2,6 @@ FROM python:3.9.2-slim-buster
 
 RUN pip install --upgrade build twine wheel setuptools --verbose
 
-ADD . /lib
-WORKDIR /lib/
+WORKDIR /vgs-api-client/
 
-CMD ["bash", "publish/build_and_publish.sh"]
+ENTRYPOINT ["bash", "./scripts/publish/run.sh"]
