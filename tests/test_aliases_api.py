@@ -6,10 +6,10 @@ import pytest
 import vgs
 from vgs import ApiException
 
-vgs.configure(
-    username=os.environ["VAULT_API_USERNAME"],
-    password=os.environ["VAULT_API_PASSWORD"],
+config = vgs.config(
+    username=os.environ["VAULT_API_USERNAME"], password=os.environ["VAULT_API_PASSWORD"]
 )
+api = vgs.Aliases(config)
 
 
 def test_redact():
@@ -26,7 +26,7 @@ def test_redact():
             storage="VOLATILE",
         ),
     ]
-    aliases = vgs.aliases.redact(data=data)
+    aliases = api.redact(data=data)
 
     assert len(aliases) == 2
     for index, item in enumerate(data):
@@ -50,9 +50,9 @@ def test_reveal():
             storage="VOLATILE",
         ),
     ]
-    aliases = list(map(lambda i: i["aliases"][0]["alias"], vgs.aliases.redact(data=data)))
+    aliases = list(map(lambda i: i["aliases"][0]["alias"], api.redact(data=data)))
 
-    response = vgs.aliases.reveal(aliases)
+    response = api.reveal(aliases)
 
     assert len(response) == 2
     original_values = list(map(lambda i: i["value"], data))
@@ -67,11 +67,11 @@ def test_delete():
             value="5201784564572092",
         )
     ]
-    alias = list(map(lambda i: i["aliases"][0]["alias"], vgs.aliases.redact(data=data)))[0]
-    vgs.aliases.delete(alias=alias)
+    alias = list(map(lambda i: i["aliases"][0]["alias"], api.redact(data=data)))[0]
+    api.delete(alias=alias)
 
     with pytest.raises(ApiException):
-        vgs.aliases.reveal(alias)
+        api.reveal(alias)
 
 
 def test_update():
@@ -81,11 +81,11 @@ def test_update():
             value=random_string(),
         )
     ]
-    alias = list(map(lambda i: i["aliases"][0]["alias"], vgs.aliases.redact(data=data)))[0]
+    alias = list(map(lambda i: i["aliases"][0]["alias"], api.redact(data=data)))[0]
 
-    vgs.aliases.update(alias=alias, data=dict(classifiers=["secure"]))
+    api.update(alias=alias, data=dict(classifiers=["secure"]))
 
-    response = vgs.aliases.reveal(alias)
+    response = api.reveal(alias)
     assert response[alias]["classifiers"] == ["secure"]
 
 

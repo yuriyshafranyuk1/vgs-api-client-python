@@ -2,9 +2,7 @@
 
 set -e
 
-usage() { echo "Required env var '$1' is missing"; exit 1; }
+export LIB_VERSION=${LIB_VERSION:-0.0.1.dev$(date "+%Y%m%d%H%M")}
 
-[ -z "${LIB_VERSION}" ] && usage "LIB_VERSION" ;
-
-docker-compose build && \
-docker-compose run test
+docker-compose build test-e2e && \
+docker-compose run test-e2e

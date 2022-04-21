@@ -1,6 +1,6 @@
 __version__ = "XXX.YYY.ZZZ"
 
 # import Aliases
-import vgs.aliases_api as aliases
-from vgs.configuration import configure
+from vgs.aliases_api import Aliases
+from vgs.configuration import config
 from vgs.exceptions import ApiException
