@@ -1,0 +1,6 @@
+[flake8]
+max-line-length = 100
+extend-ignore = E203, F811, W605
+exclude =
+    # ignore any generated code, it's all messy
+    src/vgs_api_client/*

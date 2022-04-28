@@ -30,4 +30,4 @@ https://www.verygoodsecurity.com/docs/tokenization/python-tutorial
 
 ### Support
 
-dev@verygoodsecurity.com
+support@verygoodsecurity.com

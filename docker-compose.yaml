@@ -1,6 +1,18 @@
 version: '3.7'
 
 services:
+  reformat:
+    build:
+      context: .
+      dockerfile: scripts/reformat/Dockerfile
+    volumes:
+      - ./:/vgs-api-client/
+  lint:
+    build:
+      context: .
+      dockerfile: scripts/lint/Dockerfile
+    volumes:
+      - ./:/vgs-api-client/
   assemble:
     build:
       context: .
