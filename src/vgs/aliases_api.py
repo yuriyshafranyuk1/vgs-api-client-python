@@ -20,7 +20,7 @@ class Aliases:
             for item in data:
                 requests.append(
                     CreateAliasesRequestNew(
-                        format=AliasFormat(item.get("format")),
+                        format=AliasFormat(item.get("format", "UUID")),
                         value=item.get("value"),
                         classifiers=item.get("classifiers", []),
                         storage=item.get("storage", "PERSISTENT"),
