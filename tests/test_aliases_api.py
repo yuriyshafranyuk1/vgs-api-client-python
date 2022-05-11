@@ -3,13 +3,51 @@ import random
 import string
 
 import pytest
+
 import vgs
-from vgs import ApiException
+from vgs import *
 
 config = vgs.config(
     username=os.environ["VAULT_API_USERNAME"], password=os.environ["VAULT_API_PASSWORD"]
 )
 api = vgs.Aliases(config)
+
+
+def test_invalid_auth():
+    _api = vgs.Aliases(vgs.config(username="Invalid", password="Invalid"))
+    with pytest.raises(UnauthorizedException):
+        _api.redact(
+            data=[
+                dict(
+                    format="UUID",
+                    value="Joe Doe",
+                )
+            ]
+        )
+
+
+def test_invalid_config():
+    with pytest.raises(ValueError):
+        _api = vgs.Aliases(None)
+
+
+def test_invalid_host():
+    _api = vgs.Aliases(
+        vgs.config(
+            username=os.environ["VAULT_API_USERNAME"],
+            password=os.environ["VAULT_API_PASSWORD"],
+            host="https://echo.apps.verygood.systems",
+        )
+    )
+    with pytest.raises(NotFoundException):
+        _api.redact(
+            data=[
+                dict(
+                    format="UUID",
+                    value="Joe Doe",
+                )
+            ]
+        )
 
 
 def test_redact():
@@ -26,7 +64,7 @@ def test_redact():
             storage="VOLATILE",
         ),
     ]
-    aliases = api.redact(data=data)
+    aliases = api.redact(data)
 
     assert len(aliases) == 2
     for index, item in enumerate(data):
@@ -50,7 +88,7 @@ def test_reveal():
             storage="VOLATILE",
         ),
     ]
-    aliases = list(map(lambda i: i["aliases"][0]["alias"], api.redact(data=data)))
+    aliases = list(map(lambda i: i["aliases"][0]["alias"], api.redact(data)))
 
     response = api.reveal(aliases)
 
@@ -67,10 +105,10 @@ def test_delete():
             value="5201784564572092",
         )
     ]
-    alias = list(map(lambda i: i["aliases"][0]["alias"], api.redact(data=data)))[0]
-    api.delete(alias=alias)
+    alias = list(map(lambda i: i["aliases"][0]["alias"], api.redact(data)))[0]
+    api.delete(alias)
 
-    with pytest.raises(ApiException):
+    with pytest.raises(NotFoundException):
         api.reveal(alias)
 
 
@@ -81,9 +119,9 @@ def test_update():
             value=random_string(),
         )
     ]
-    alias = list(map(lambda i: i["aliases"][0]["alias"], api.redact(data=data)))[0]
+    alias = list(map(lambda i: i["aliases"][0]["alias"], api.redact(data)))[0]
 
-    api.update(alias=alias, data=dict(classifiers=["secure"]))
+    api.update(alias, dict(classifiers=["secure"]))
 
     response = api.reveal(alias)
     assert response[alias]["classifiers"] == ["secure"]
