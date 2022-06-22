@@ -8,7 +8,8 @@ import vgs
 from vgs import *
 
 config = vgs.config(
-    username=os.environ["VAULT_API_USERNAME"], password=os.environ["VAULT_API_PASSWORD"]
+    username=os.environ["VAULT_API_USERNAME"],
+    password=os.environ["VAULT_API_PASSWORD"],
 )
 api = vgs.Aliases(config)
 

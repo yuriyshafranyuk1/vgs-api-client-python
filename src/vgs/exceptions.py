@@ -21,3 +21,7 @@ class NotFoundException(VgsApiException):
 
 class ForbiddenException(VgsApiException):
     pass
+
+
+class FunctionsApiException(VgsApiException):
+    pass

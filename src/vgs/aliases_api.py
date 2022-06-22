@@ -1,5 +1,6 @@
 import vgs.exceptions
 import vgs_api_client
+from vgs.configuration import Configuration
 from vgs_api_client import Configuration
 from vgs_api_client.api import aliases_api
 from vgs_api_client.exceptions import (
@@ -32,7 +33,12 @@ class Aliases:
     def __init__(self, config: Configuration):
         if not config:
             raise ValueError
-        self._api = aliases_api.AliasesApi(vgs_api_client.ApiClient(config))
+
+        self._api = aliases_api.AliasesApi(
+            vgs_api_client.ApiClient(
+                Configuration(username=config.username, password=config.password, host=config.host)
+            )
+        )
 
     def redact(self, data):
         # TODO: validate data and raise meaningful exception on validation error
