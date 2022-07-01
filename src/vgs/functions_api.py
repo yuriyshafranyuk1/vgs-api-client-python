@@ -1,8 +1,8 @@
 import importlib.resources as pkg_resources
 import os
 import tempfile
-import uuid
 import textwrap
+import uuid
 from string import Template
 
 import requests
@@ -11,11 +11,19 @@ import vgscli.auth
 import vgscli.routes
 import vgscli.vaults_api
 from requests import utils
+from simple_rest_client.exceptions import NotFoundError
+from vgs import certs
 from vgs.configuration import Configuration
 from vgscli.auth import token_util
 from vgscli.errors import RouteNotValidError
 
-from vgs import certs
+
+ECHO_SECURE_HOST_CONFIG = "echo\\.secure\\.verygood\\.systems"
+FUNCTION_CONDITION_EXPRESSION = (
+    "'field': 'QueryString', 'type': 'string', 'operator': 'equals', 'values': ['function_name="
+)
+
+FUNCTION_TYPE_LARKY = "larky"
 
 ROUTE_TEMPLATE = """
 data:
@@ -79,9 +87,9 @@ class Functions:
             )
         if not name:
             raise vgs.exceptions.FunctionsApiException("Function name is required")
-        if language != "larky":
+        if language != FUNCTION_TYPE_LARKY:
             raise vgs.exceptions.FunctionsApiException(
-                "Unsupported function type. Supported types: larky"
+                f"Unsupported function type. Supported types: {FUNCTION_TYPE_LARKY}"
             )
         vgscli.auth.client_credentials_login(
             None,
@@ -99,6 +107,102 @@ class Functions:
             route_id=route_id,
         )
         self._create_route(route_definition)
+
+    def list(self):
+        if not (self.config.service_account_name and self.config.service_account_password):
+            raise vgs.exceptions.FunctionsApiException(
+                "Functions API configuration is not complete. "
+                "Please set 'service_account_name' and 'service_account_password' to use functions CRUD API."
+            )
+        vgscli.auth.client_credentials_login(
+            None,
+            self.config.service_account_name,
+            self.config.service_account_password,
+            self.auth_server_environment,
+        )
+        vgscli.auth.handshake(None, self.auth_server_environment)
+
+        try:
+            routes = self._list_routes()
+            return list(self._extract_functions(routes))
+        except Exception:
+            raise vgs.FunctionsApiException(f"Failed to list functions")
+
+    def get(self, name):
+        if not (self.config.service_account_name and self.config.service_account_password):
+            raise vgs.exceptions.FunctionsApiException(
+                "Functions API configuration is not complete. "
+                "Please set 'service_account_name' and 'service_account_password' to use functions CRUD API."
+            )
+        if not name:
+            raise vgs.exceptions.FunctionsApiException("Function name is required")
+        vgscli.auth.client_credentials_login(
+            None,
+            self.config.service_account_name,
+            self.config.service_account_password,
+            self.auth_server_environment,
+        )
+        vgscli.auth.handshake(None, self.auth_server_environment)
+
+        route_id = self._function_id(name)
+
+        try:
+            route_config = self._get_route(route_id)
+            definition = self._extract_larky(route_config)
+        except NotFoundError as nfe:
+            raise vgs.NotFoundException(f"Function '{name}' not found")
+        except Exception:
+            raise vgs.FunctionsApiException(f"Failed to get '{name}' function")
+
+        return name, FUNCTION_TYPE_LARKY, definition
+
+    def delete(self, name):
+        if not (self.config.service_account_name and self.config.service_account_password):
+            raise vgs.exceptions.FunctionsApiException(
+                "Functions API configuration is not complete. "
+                "Please set 'service_account_name' and 'service_account_password' to use functions CRUD API."
+            )
+        if not name:
+            raise vgs.exceptions.FunctionsApiException("Function name is required")
+        vgscli.auth.client_credentials_login(
+            None,
+            self.config.service_account_name,
+            self.config.service_account_password,
+            self.auth_server_environment,
+        )
+        vgscli.auth.handshake(None, self.auth_server_environment)
+
+        route_id = self._function_id(name)
+
+        try:
+            self._delete_route(route_id)
+        except NotFoundError as nfe:
+            raise vgs.NotFoundException(f"Function '{name}' not found")
+        except Exception as e:
+            raise vgs.FunctionsApiException(f"Failed to delete '{name}' function")
+
+    @staticmethod
+    def _extract_larky(route_config):
+        script = route_config["attributes"]["entries"][0]["operations"][0][0]["parameters"][
+            "script"
+        ]
+        return script
+
+    @staticmethod
+    def _extract_functions(routes):
+        for route in routes:
+            try:
+                host_endpoint = route["attributes"]["host_endpoint"]
+                filter_config = str(route["attributes"]["entries"][0]["config"])
+                if (
+                    host_endpoint == ECHO_SECURE_HOST_CONFIG
+                    and FUNCTION_CONDITION_EXPRESSION in filter_config
+                ):
+                    function_name = route["attributes"]["tags"]["name"]
+                    yield function_name
+            except Exception as e:
+                # invalid route (not a function). skip it
+                continue
 
     @staticmethod
     def _indent_definition(definition):
@@ -149,6 +253,29 @@ class Functions:
             vgscli.routes.sync_all_routes(routes_api, route_definition)
         except RouteNotValidError as routeError:
             raise vgs.exceptions.FunctionsApiException(routeError.message)
+
+    def _get_route(self, route_id):
+        auth_token = token_util.get_access_token()
+        routes_api = vgscli.vaults_api.create_api(
+            None, self.config.vault_id, self.auth_server_environment, auth_token
+        )
+        response = routes_api.routes.retrieve(route_id)
+        return response.body["data"]
+
+    def _list_routes(self):
+        auth_token = token_util.get_access_token()
+        routes_api = vgscli.vaults_api.create_api(
+            None, self.config.vault_id, self.auth_server_environment, auth_token
+        )
+        response = routes_api.routes.list()
+        return response.body["data"]
+
+    def _delete_route(self, route_id):
+        auth_token = token_util.get_access_token()
+        routes_api = vgscli.vaults_api.create_api(
+            None, self.config.vault_id, self.auth_server_environment, auth_token
+        )
+        return routes_api.routes.delete(route_id)
 
     def invoke(self, name, data):
         if not (self.config.username and self.config.password):
