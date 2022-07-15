@@ -15,3 +15,12 @@ pushd tests
   echo "Running tests"
   pytest . -vvv --last-failed
 popd
+
+echo "Running examples"
+for category in $(ls examples/); do
+  for example in $(ls examples/$category/); do
+    pushd examples/$category
+      python $example
+    popd
+  done
+done
