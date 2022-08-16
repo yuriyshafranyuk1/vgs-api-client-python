@@ -1,0 +1,16 @@
+{
+  "errors": [
+    {
+      "status": 400,
+      "title": "Bad request",
+      "detail": "Invalid field 'operations': MUST be a list of lists\n",
+      "href": "http://api.verygoodsecurity.io/rule-chains/0907ce78-202f-4966-a9d5-2260f74dc2bf"
+    },
+    {
+      "status": 400,
+      "title": "Bad request",
+      "detail": "github.com/verygoodsecurity/common/content-type/json/Select: INVALID_ARGUMENT: Missing parameters: [{'paths'}]\n",
+      "href": "http://api.verygoodsecurity.io/rule-chains/0907ce78-202f-4966-a9d5-2260f74dc2bf"
+    }
+  ]
+}

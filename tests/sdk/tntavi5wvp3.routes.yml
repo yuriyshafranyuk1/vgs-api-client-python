@@ -1,0 +1,97 @@
+data:
+- attributes:
+    created_at: '2018-11-30T23:23:13'
+    destination_override_endpoint: https://interactive-form.herokuapp.com
+    entries: []
+    host_endpoint: (.*)\.verygoodproxy\.com
+    id: e0d68545-acce-42e3-a6df-dafc2f2a6ab1
+    port: 443
+    protocol: http
+    source_endpoint: '*'
+    updated_at: '2018-11-30T23:23:13'
+  id: bbbbbb-acce-42e3-a6df-dafc2f2a6ab1
+  type: rule_chain
+- attributes:
+    created_at: '2018-11-30T23:23:13'
+    destination_override_endpoint: https://interactive-form.herokuapp.com
+    entries: []
+    host_endpoint: (.*)\.verygoodproxy\.com
+    id: e0d68545-acce-42e3-a6df-dafc2f2a6ab1
+    port: 443
+    protocol: http
+    source_endpoint: '*'
+    updated_at: '2018-11-30T23:23:13'
+  id: zzzzzz-acce-42e3-a6df-dafc2f2a6ab1
+  type: rule_chain
+- attributes:
+    host_endpoint: httpbin\.verygoodsecurity\.io
+    id: b6621cd9-b334-4807-a2e3-d9607fb058d4
+    port: 80
+    protocol: http
+    source_endpoint: '*'
+    updated_at: '2018-12-01T22:28:15'
+    destination_override_endpoint: '*'
+    created_at: '2018-12-01T22:16:04'
+    entries:
+    - classifiers: {}
+      config:
+        condition: AND
+        expression: null
+        rules:
+        - condition: null
+          expression:
+            field: PathInfo
+            operator: equals
+            type: string
+            values: [/post]
+          rules: null
+      id: bbbbbb-564c-4cc0-93e5-e4c83a904df9
+      id_selector: null
+      operation: ENRICH
+      operations: |-
+        [ {
+          "@type" : "type.googleapis.com/ProcessMultipartOperationConfig",
+          "partNames" : [ "attachment[file_token]" ]
+        }, {
+          "@type" : "type.googleapis.com/RedactFileOperationConfig"
+        } ]
+      phase: REQUEST
+      public_token_generator: FPE_SIX_T_FOUR
+      targets: []
+      token_manager: PERSISTENT
+      transformer: JSON_PATH
+      transformer_config: [$.secret]
+      transformer_config_map: null
+    - classifiers: {}
+      config:
+        condition: AND
+        expression: null
+        rules:
+        - condition: null
+          expression:
+            field: PathInfo
+            operator: equals
+            type: string
+            values: [/post]
+          rules: null
+      id: aaaaaa-564c-4cc0-93e5-e4c83a904df9
+      id_selector: null
+      operation: ENRICH
+      operations: |-
+        [ {
+          "@type" : "type.googleapis.com/ProcessMultipartOperationConfig",
+          "partNames" : [ "attachment[file_token]" ]
+        }, {
+          "@type" : "type.googleapis.com/RedactFileOperationConfig"
+        } ]
+      phase: REQUEST
+      public_token_generator: FPE_SIX_T_FOUR
+      targets: []
+      token_manager: PERSISTENT
+      transformer: JSON_PATH
+      transformer_config: [$.secret]
+      transformer_config_map: null
+  id: aaaaaa-b334-4807-a2e3-d9607fb058d4
+  type: rule_chain
+
+version: 1

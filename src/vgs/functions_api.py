@@ -1,23 +1,22 @@
 import importlib.resources as pkg_resources
 import os
+import requests
 import tempfile
 import textwrap
 import uuid
-from string import Template
-
-import requests
-import vgs.exceptions
-import vgscli.auth
-import vgscli.routes
-import vgscli.vaults_api
 from requests import utils
+from string import Template
 from simple_rest_client.exceptions import NotFoundError
-from vgs import certs
-from vgs.configuration import Configuration
-from vgscli.auth import token_util
-from vgscli.errors import RouteNotValidError
 
-USER_AGENT = "vgs-api-client/XXX.YYY.ZZZ/python"
+import sdk.api.routes
+import sdk.api.vaults_api
+import vgs.exceptions
+from sdk.api.errors import RouteNotValidError
+from vgs import certs
+from vgs.base_api import BaseApi
+from vgs.configuration import Configuration
+
+USER_AGENT = "vgs-sdk/XXX.YYY.ZZZ/python"
 
 ECHO_SECURE_HOST_CONFIG = "echo\\.secure\\.verygood\\.systems"
 FUNCTION_CONDITION_EXPRESSION = (
@@ -111,11 +110,12 @@ version: 1
 """
 
 
-class Functions:
+class Functions(BaseApi):
     def __init__(self, config: Configuration):
         self.config = config
         self.proxy_cert = None
-        self.auth_server_environment = "dev" if config.environment == "dev" else "prod"
+        self.auth_environment = "dev" if config.environment == "dev" else "prod"
+        super(Functions, self).__init__(config)
 
     def create(self, name, language, definition):
         if not name:
@@ -124,7 +124,7 @@ class Functions:
             raise vgs.exceptions.FunctionsApiException(
                 f"Unsupported function type. Supported types: {FUNCTION_TYPE_LARKY}"
             )
-        self._authenticate()
+        self._auth()
 
         route_id = self._function_id(name)
 
@@ -138,7 +138,7 @@ class Functions:
         self._create_route(route_definition)
 
     def list(self):
-        self._authenticate()
+        self._auth()
 
         try:
             routes = self._list_routes()
@@ -149,7 +149,7 @@ class Functions:
     def get(self, name):
         if not name:
             raise vgs.exceptions.FunctionsApiException("Function name is required")
-        self._authenticate()
+        self._auth()
         route_id = self._function_id(name)
 
         try:
@@ -165,7 +165,7 @@ class Functions:
     def delete(self, name):
         if not name:
             raise vgs.exceptions.FunctionsApiException("Function name is required")
-        self._authenticate()
+        self._auth()
 
         route_id = self._function_id(name)
 
@@ -175,20 +175,6 @@ class Functions:
             raise vgs.NotFoundException(f"Function '{name}' not found")
         except Exception as ex:
             raise vgs.FunctionsApiException(f"Failed to delete '{name}' function") from ex
-
-    def _authenticate(self):
-        if not (self.config.service_account_name and self.config.service_account_password):
-            raise vgs.exceptions.FunctionsApiException(
-                "Functions API configuration is not complete. "
-                "Please set 'service_account_name' and 'service_account_password' to use functions CRUD API."
-            )
-        vgscli.auth.client_credentials_login(
-            None,
-            self.config.service_account_name,
-            self.config.service_account_password,
-            self.auth_server_environment,
-        )
-        vgscli.auth.handshake(None, self.auth_server_environment)
 
     @staticmethod
     def _extract_larky(route_config):
@@ -256,7 +242,7 @@ class Functions:
     def _create_route(self, route_definition):
         routes_api = self._create_routes_api()
         try:
-            vgscli.routes.sync_all_routes(routes_api, route_definition)
+            sdk.api.routes.sync_all_routes(routes_api, route_definition)
         except RouteNotValidError as routeError:
             raise vgs.exceptions.FunctionsApiException(routeError.message)
 
@@ -275,10 +261,9 @@ class Functions:
         return routes_api.routes.delete(route_id)
 
     def _create_routes_api(self):
-        auth_token = token_util.get_access_token()
 
-        api = vgscli.vaults_api.create_api(
-            None, self.config.vault_id, self.auth_server_environment, auth_token
+        api = sdk.api.vaults_api.create_api(
+            None, self.config.vault_id, self.auth_environment, self.auth_token
         )
         api.headers["User-Agent"] = USER_AGENT
         return api

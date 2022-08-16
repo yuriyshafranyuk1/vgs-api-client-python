@@ -276,7 +276,7 @@ def test_create_function_with_invalid_config():
             environment=os.environ.get("VAULT_ENVIRONMENT", "sandbox"),
         )
     )
-    with pytest.raises(FunctionsApiException) as e:
+    with pytest.raises(VgsApiException) as e:
         _functions.create(
             name="no-op",
             language="larky",
@@ -287,7 +287,7 @@ def test_create_function_with_invalid_config():
         )
     assert (
         str(e.value)
-        == "Functions API configuration is not complete. Please set 'service_account_name' and 'service_account_password' to use functions CRUD API."
+        == "API configuration is not complete. Please set 'service_account_name' and 'service_account_password' to use this API."
     )
 
 

@@ -1,0 +1,53 @@
+{
+  "data" : {
+    "id" : "b93df774-22b6-448a-a748-26c0ff1d2601",
+    "type" : "rule_chain",
+    "attributes" : {
+      "id" : "b93df774-22b6-448a-a748-26c0ff1d2601",
+      "created_at" : "2018-11-30T16:07:42",
+      "updated_at" : "2018-11-30T23:27:00",
+      "protocol" : "http",
+      "source_endpoint" : "*",
+      "destination_override_endpoint" : "https://interactive-form.herokuapp.com",
+      "host_endpoint" : "(.*)\\.verygoodproxy\\.com",
+      "port" : 443,
+      "entries" : [ {
+        "id" : "d33e8653-3b80-4f6f-87eb-a745f75fcdc3",
+        "phase" : "REQUEST",
+        "operation" : "REDACT",
+        "token_manager" : "PERSISTENT",
+        "public_token_generator" : "UUID",
+        "transformer" : "FORM_FIELD",
+        "transformer_config" : [ "card-number" ],
+        "transformer_config_map" : null,
+        "operations" : null,
+        "targets" : [ "body" ],
+        "id_selector" : null,
+        "classifiers" : { },
+        "config" : {
+          "condition" : "AND",
+          "rules" : [ {
+            "condition" : null,
+            "rules" : null,
+            "expression" : {
+              "field" : "PathInfo",
+              "type" : "string",
+              "operator" : "equals",
+              "values" : [ "/payment" ]
+            }
+          }, {
+            "condition" : null,
+            "rules" : null,
+            "expression" : {
+              "field" : "ContentType",
+              "type" : "string",
+              "operator" : "equals",
+              "values" : [ "application/x-www-form-urlencoded" ]
+            }
+          } ],
+          "expression" : null
+        }
+      } ]
+    }
+  }
+}

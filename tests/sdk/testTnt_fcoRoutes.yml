@@ -1,0 +1,61 @@
+data:
+  - attributes:
+      created_at: '2020-10-28T17:26:55'
+      destination_override_endpoint: https://interactive-form.herokuapp.com
+      entries:
+        - classifiers: {}
+          config:
+            condition: AND
+            expression: null
+            rules:
+              - condition: null
+                expression:
+                  field: PathInfo
+                  operator: matches
+                  type: string
+                  values:
+                    - /post
+                rules: null
+              - condition: null
+                expression:
+                  field: ContentType
+                  operator: equals
+                  type: string
+                  values:
+                    - application/json
+                rules: null
+          id: aaa68545-acce-42e3-a6df-dafc2f2a6ab1
+          id_selector: null
+          operation: REDACT
+          operations:
+            - name: 'github.com/verygoodsecurity/common/http/body/Select'
+            - name: 'github.com/verygoodsecurity/common/content-type/json/Select'
+              parameters:
+                paths:
+                  - '$.account_number'
+            - name: github.com/verygoodsecurity/common/utils/crypto/tripleDes/Encrypt
+              parameters:
+                padding: 'PKCS5Padding'
+                key: 'not_existing_key'
+          phase: REQUEST
+          public_token_generator: UUID
+          targets:
+            - body
+          token_manager: PERSISTENT
+          transformer: JSON_PATH
+          transformer_config:
+            - $.account_number
+          transformer_config_map: null
+      host_endpoint: (.*)\.verygoodproxy\.io
+      id: aaa68545-acce-42e3-a6df-dafc2f2a6ab1
+      ordinal: null
+      port: 80
+      protocol: http
+      source_endpoint: '*'
+      tags:
+        name: echo.apps.verygood.systems-fuchsia-carol
+        source: RouteContainer
+      updated_at: '2020-10-29T17:16:37'
+    id: 3af7f407-d9e6-4bf3-894a-a53d8c70224c
+    type: rule_chain
+version: 1
