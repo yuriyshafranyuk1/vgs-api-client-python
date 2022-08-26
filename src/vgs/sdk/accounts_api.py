@@ -3,7 +3,7 @@ import logging
 from simple_rest_client.api import API
 from simple_rest_client.resource import Resource
 
-from sdk.api.errors import VaultNotFoundError
+from vgs.sdk.errors import VaultNotFoundError
 
 logger = logging.getLogger(__name__)
 

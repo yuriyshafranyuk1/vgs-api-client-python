@@ -1,6 +1,6 @@
 from simple_rest_client.api import API
 from simple_rest_client.resource import Resource
-import sdk.api.accounts_api as accounts_api
+import vgs.sdk.accounts_api as accounts_api
 
 
 class RouteResource(Resource):

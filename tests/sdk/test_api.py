@@ -1,5 +1,5 @@
-from sdk.api.vaults_api import create_api as create_vaults_api
-from sdk.api import accounts_api
+from vgs.sdk.vaults_api import create_api as create_vaults_api
+from vgs.sdk import accounts_api
 from unittest.mock import patch
 import json
 

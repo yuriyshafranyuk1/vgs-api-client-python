@@ -1,5 +1,5 @@
-from sdk.api.accounts_api import create_api, get_api_url
-from sdk.api.accounts_api import VaultNotFoundError
+from vgs.sdk.accounts_api import create_api, get_api_url
+from vgs.sdk.accounts_api import VaultNotFoundError
 import json
 import pytest
 

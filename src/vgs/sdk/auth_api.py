@@ -2,7 +2,7 @@ import jwt
 from simple_rest_client.api import API
 from simple_rest_client.resource import Resource
 
-from sdk.api.utils import expired
+from vgs.sdk.utils import expired
 
 CLIENT_ID = "vgs-cli-public"
 SCOPE = "openid"

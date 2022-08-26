@@ -116,14 +116,45 @@ def test_create_and_execute_redact_function():
         def process(input, ctx):
             body = json.decode(str(input.body))
             secret = body['secret']
-            body['secret'] = vault.redact(secret, format='UUID', storage='persistent')
+            body['secret'] = vault.redact(secret, format='GENERIC_T_FOUR', storage='persistent')
             input.body = builtins.bytes(json.encode(body))
             return input
         """,
     )
-    result = functions.invoke(name="redact_function", data=json.dumps({"secret": "this is secret"}))
+    result = functions.invoke(
+        name="redact_function", data=json.dumps({"secret": "this is a secret 123"})
+    )
     print(result)
     assert json.loads(result)["secret"].startswith("tok_")
+
+
+def test_create_and_execute_redact_with_alias_decorator_function():
+    functions.create(
+        name="redact_decorator_function",
+        language="larky",
+        definition="""
+        load("@stdlib//json", "json")
+        load("@stdlib//builtins", "builtins")
+        load("@vgs//vault", "vault")
+
+        def process(input, ctx):
+            body = json.decode(str(input.body))
+            secret = body['secret']
+            body['secret'] = vault.redact(
+                secret, format='NUM_LENGTH_PRESERVING', storage='persistent', decorator_config={
+                    "searchPattern":"(?<token>[0-9]{12})(?<lastFour>[0-9]{4})",
+                    "replacePattern":"98${token}${lastFour}"
+                    })
+            input.body = builtins.bytes(json.encode(body))
+            return input
+        """,
+    )
+    result = functions.invoke(
+        name="redact_decorator_function", data=json.dumps({"secret": "4111111111111111"})
+    )
+    print(result)
+    assert json.loads(result)["secret"].startswith("98")
+    assert json.loads(result)["secret"].endswith("1111")
 
 
 def test_create_and_execute_md5():

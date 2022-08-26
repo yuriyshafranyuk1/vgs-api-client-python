@@ -4,8 +4,8 @@ import time
 
 import pytest
 
-from sdk.api.errors import NoSuchFileOrDirectoryError
-from sdk.api.utils import to_json, silent_file_remove, is_file_accessible, read_file, expired
+from vgs.sdk.errors import NoSuchFileOrDirectoryError
+from vgs.sdk.utils import to_json, silent_file_remove, is_file_accessible, read_file, expired
 
 
 def test_expired():

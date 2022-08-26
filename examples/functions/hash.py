@@ -22,7 +22,7 @@ aliases = vgs.Aliases(config)
 secret = [
     dict(
         format="UUID",
-        value="this is secret",
+        value="this is really a secret",
     )
 ]
 alias = [resp["aliases"][0]["alias"] for resp in aliases.redact(secret)][0]
@@ -58,5 +58,5 @@ functions.create(
 result = functions.invoke(name="hash", data=json.dumps({"secret": alias}))
 print(result)
 assert (
-    json.loads(result)["hash"] == "f21b6c8de08967089e1dee783869134fe65fe854d84bc637968a04d718dc5c69"
+    json.loads(result)["hash"] == "d50d9b71fbb136d6dab3c255d30da188bb24f118bca657cc7c06e76c372a088d"
 )

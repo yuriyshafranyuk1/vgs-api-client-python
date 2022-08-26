@@ -6,7 +6,7 @@ import time
 import uuid
 from datetime import datetime
 
-from sdk.api.errors import SchemaValidationError, NoSuchFileOrDirectoryError
+from vgs.sdk.errors import SchemaValidationError, NoSuchFileOrDirectoryError
 
 
 def expired(exp, delta=10):

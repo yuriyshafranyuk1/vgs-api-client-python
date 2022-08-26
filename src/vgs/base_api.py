@@ -1,5 +1,5 @@
-from sdk.api import auth_api
-from sdk.api.errors import AuthenticationError
+from vgs.sdk import auth_api
+from vgs.sdk.errors import AuthenticationError
 from vgs.configuration import Configuration
 from vgs.exceptions import VgsApiException
 

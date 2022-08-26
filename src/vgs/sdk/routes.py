@@ -1,7 +1,7 @@
 from simple_rest_client import exceptions
 
-from sdk.api.errors import RouteNotValidError
-from sdk.api.serializers import dump_yaml, update_and_normalize, Literal
+from vgs.sdk.errors import RouteNotValidError
+from vgs.sdk.serializers import dump_yaml, update_and_normalize, Literal
 
 
 def dump_all_routes(api):

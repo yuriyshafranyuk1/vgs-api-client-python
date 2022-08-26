@@ -8,10 +8,10 @@ from requests import utils
 from string import Template
 from simple_rest_client.exceptions import NotFoundError
 
-import sdk.api.routes
-import sdk.api.vaults_api
+import vgs.sdk.routes
+import vgs.sdk.vaults_api
 import vgs.exceptions
-from sdk.api.errors import RouteNotValidError
+from vgs.sdk.errors import RouteNotValidError
 from vgs import certs
 from vgs.base_api import BaseApi
 from vgs.configuration import Configuration
@@ -242,7 +242,7 @@ class Functions(BaseApi):
     def _create_route(self, route_definition):
         routes_api = self._create_routes_api()
         try:
-            sdk.api.routes.sync_all_routes(routes_api, route_definition)
+            vgs.sdk.routes.sync_all_routes(routes_api, route_definition)
         except RouteNotValidError as routeError:
             raise vgs.exceptions.FunctionsApiException(routeError.message)
 
@@ -262,7 +262,7 @@ class Functions(BaseApi):
 
     def _create_routes_api(self):
 
-        api = sdk.api.vaults_api.create_api(
+        api = vgs.sdk.vaults_api.create_api(
             None, self.config.vault_id, self.auth_environment, self.auth_token
         )
         api.headers["User-Agent"] = USER_AGENT

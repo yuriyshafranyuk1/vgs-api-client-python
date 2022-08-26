@@ -35,6 +35,6 @@ functions.create(
             return input
         """,
 )
-result = functions.invoke(name="store_value", data=json.dumps({"secret": "this is secret"}))
+result = functions.invoke(name="store_value", data=json.dumps({"secret": "this is another secret"}))
 print(result)
 assert json.loads(result)["secret"].startswith("tok_")

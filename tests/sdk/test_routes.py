@@ -1,13 +1,13 @@
-from sdk.api import routes
+from vgs.sdk import routes
 import json
 import pytest
 import unittest
 
 from simple_rest_client import exceptions
 
-from sdk.api.errors import RouteNotValidError
-from sdk.api.routes import dump_all_routes, sync_all_routes
-from sdk.api.serializers import yaml
+from vgs.sdk.errors import RouteNotValidError
+from vgs.sdk.routes import dump_all_routes, sync_all_routes
+from vgs.sdk.serializers import yaml
 
 ROUTE_YAML_FIXTURE = """
 data:

@@ -1,7 +1,7 @@
 import decimal
 import unittest
 
-from sdk.api.serializers import dump_json, dump_yaml
+from vgs.sdk.serializers import dump_json, dump_yaml
 
 
 class SerializersDecimalTestCase(unittest.TestCase):
