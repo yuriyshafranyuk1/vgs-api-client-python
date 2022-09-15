@@ -58,10 +58,13 @@ class AliasFormat(ModelSimple):
             'FPE_SIX_T_FOUR': "FPE_SIX_T_FOUR",
             'FPE_SSN_T_FOUR': "FPE_SSN_T_FOUR",
             'FPE_T_FOUR': "FPE_T_FOUR",
+            'GENERIC_T_FOUR': "GENERIC_T_FOUR",
+            'NON_LUHN_FPE_ALPHANUMERIC': "NON_LUHN_FPE_ALPHANUMERIC",
             'NUM_LENGTH_PRESERVING': "NUM_LENGTH_PRESERVING",
             'PFPT': "PFPT",
             'RAW_UUID': "RAW_UUID",
             'UUID': "UUID",
+            'VGS_FIXED_LEN_GENERIC': "VGS_FIXED_LEN_GENERIC",
         },
     }
 
@@ -113,10 +116,10 @@ class AliasFormat(ModelSimple):
         Note that value can be passed either in args or in kwargs, but not in both.
 
         Args:
-            args[0] (str): Format of the generated alias string.  See [Alias Formats](#section/Introduction/Alias-Formats) for details. ., must be one of ["FPE_ACC_NUM_T_FOUR", "FPE_ALPHANUMERIC_ACC_NUM_T_FOUR", "FPE_SIX_T_FOUR", "FPE_SSN_T_FOUR", "FPE_T_FOUR", "NUM_LENGTH_PRESERVING", "PFPT", "RAW_UUID", "UUID", ]  # noqa: E501
+            args[0] (str): Format of the generated alias string.  See [Alias Formats](#section/Introduction/Alias-Formats) for details. ., must be one of ["FPE_ACC_NUM_T_FOUR", "FPE_ALPHANUMERIC_ACC_NUM_T_FOUR", "FPE_SIX_T_FOUR", "FPE_SSN_T_FOUR", "FPE_T_FOUR", "GENERIC_T_FOUR", "NON_LUHN_FPE_ALPHANUMERIC", "NUM_LENGTH_PRESERVING", "PFPT", "RAW_UUID", "UUID", "VGS_FIXED_LEN_GENERIC", ]  # noqa: E501
 
         Keyword Args:
-            value (str): Format of the generated alias string.  See [Alias Formats](#section/Introduction/Alias-Formats) for details. ., must be one of ["FPE_ACC_NUM_T_FOUR", "FPE_ALPHANUMERIC_ACC_NUM_T_FOUR", "FPE_SIX_T_FOUR", "FPE_SSN_T_FOUR", "FPE_T_FOUR", "NUM_LENGTH_PRESERVING", "PFPT", "RAW_UUID", "UUID", ]  # noqa: E501
+            value (str): Format of the generated alias string.  See [Alias Formats](#section/Introduction/Alias-Formats) for details. ., must be one of ["FPE_ACC_NUM_T_FOUR", "FPE_ALPHANUMERIC_ACC_NUM_T_FOUR", "FPE_SIX_T_FOUR", "FPE_SSN_T_FOUR", "FPE_T_FOUR", "GENERIC_T_FOUR", "NON_LUHN_FPE_ALPHANUMERIC", "NUM_LENGTH_PRESERVING", "PFPT", "RAW_UUID", "UUID", "VGS_FIXED_LEN_GENERIC", ]  # noqa: E501
             _check_type (bool): if True, values for parameters in openapi_types
                                 will be type checked and a TypeError will be
                                 raised if the wrong type is input.
@@ -203,10 +206,10 @@ class AliasFormat(ModelSimple):
         Note that value can be passed either in args or in kwargs, but not in both.
 
         Args:
-            args[0] (str): Format of the generated alias string.  See [Alias Formats](#section/Introduction/Alias-Formats) for details. ., must be one of ["FPE_ACC_NUM_T_FOUR", "FPE_ALPHANUMERIC_ACC_NUM_T_FOUR", "FPE_SIX_T_FOUR", "FPE_SSN_T_FOUR", "FPE_T_FOUR", "NUM_LENGTH_PRESERVING", "PFPT", "RAW_UUID", "UUID", ]  # noqa: E501
+            args[0] (str): Format of the generated alias string.  See [Alias Formats](#section/Introduction/Alias-Formats) for details. ., must be one of ["FPE_ACC_NUM_T_FOUR", "FPE_ALPHANUMERIC_ACC_NUM_T_FOUR", "FPE_SIX_T_FOUR", "FPE_SSN_T_FOUR", "FPE_T_FOUR", "GENERIC_T_FOUR", "NON_LUHN_FPE_ALPHANUMERIC", "NUM_LENGTH_PRESERVING", "PFPT", "RAW_UUID", "UUID", "VGS_FIXED_LEN_GENERIC", ]  # noqa: E501
 
         Keyword Args:
-            value (str): Format of the generated alias string.  See [Alias Formats](#section/Introduction/Alias-Formats) for details. ., must be one of ["FPE_ACC_NUM_T_FOUR", "FPE_ALPHANUMERIC_ACC_NUM_T_FOUR", "FPE_SIX_T_FOUR", "FPE_SSN_T_FOUR", "FPE_T_FOUR", "NUM_LENGTH_PRESERVING", "PFPT", "RAW_UUID", "UUID", ]  # noqa: E501
+            value (str): Format of the generated alias string.  See [Alias Formats](#section/Introduction/Alias-Formats) for details. ., must be one of ["FPE_ACC_NUM_T_FOUR", "FPE_ALPHANUMERIC_ACC_NUM_T_FOUR", "FPE_SIX_T_FOUR", "FPE_SSN_T_FOUR", "FPE_T_FOUR", "GENERIC_T_FOUR", "NON_LUHN_FPE_ALPHANUMERIC", "NUM_LENGTH_PRESERVING", "PFPT", "RAW_UUID", "UUID", "VGS_FIXED_LEN_GENERIC", ]  # noqa: E501
             _check_type (bool): if True, values for parameters in openapi_types
                                 will be type checked and a TypeError will be
                                 raised if the wrong type is input.

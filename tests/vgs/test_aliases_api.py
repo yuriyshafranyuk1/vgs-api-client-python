@@ -64,13 +64,31 @@ def test_redact():
             value="Joe Doe",
             storage="VOLATILE",
         ),
+        dict(
+            format="GENERIC_T_FOUR",
+            value="4111111111111111",
+            storage="PERSISTENT",
+        ),
+        dict(
+            format="NON_LUHN_FPE_ALPHANUMERIC",
+            value="5454545454545454",
+            storage="PERSISTENT",
+        ),
+        dict(
+            format="VGS_FIXED_LEN_GENERIC",
+            value="12312345",
+            storage="PERSISTENT",
+        ),
     ]
     aliases = api.redact(data)
 
-    assert len(aliases) == 2
+    assert len(aliases) == 5
     for index, item in enumerate(data):
         assert aliases[index]["value"] == item["value"]
-        assert aliases[index]["aliases"][0]["alias"].startswith("tok_")
+        if aliases[index]["aliases"][0]["format"]["value"] == "UUID":
+            assert aliases[index]["aliases"][0]["alias"].startswith("tok_")
+        if "FPE" in aliases[index]["aliases"][0]["format"]["value"]:
+            assert len(aliases[index]["aliases"][0]["alias"]) == len(aliases[index]["value"])
         assert aliases[index]["storage"] == item["storage"]
     assert set(aliases[0]["classifiers"]) == set(data[0]["classifiers"])
     assert aliases[1]["classifiers"] == []
@@ -88,12 +106,27 @@ def test_reveal():
             value="Joe Doe",
             storage="VOLATILE",
         ),
+        dict(
+            format="GENERIC_T_FOUR",
+            value="4111111111111111",
+            storage="PERSISTENT",
+        ),
+        dict(
+            format="NON_LUHN_FPE_ALPHANUMERIC",
+            value="5454545454545454",
+            storage="PERSISTENT",
+        ),
+        dict(
+            format="VGS_FIXED_LEN_GENERIC",
+            value="12312345",
+            storage="PERSISTENT",
+        ),
     ]
     aliases = list(map(lambda i: i["aliases"][0]["alias"], api.redact(data)))
 
     response = api.reveal(aliases)
 
-    assert len(response) == 2
+    assert len(response) == 5
     original_values = list(map(lambda i: i["value"], data))
     revealed_values = list(map(lambda i: i["value"], response.values()))
     assert set(original_values) == set(revealed_values)

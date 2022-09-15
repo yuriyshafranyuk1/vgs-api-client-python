@@ -450,10 +450,13 @@ components:
         - FPE_SIX_T_FOUR
         - FPE_SSN_T_FOUR
         - FPE_T_FOUR
+        - GENERIC_T_FOUR
+        - NON_LUHN_FPE_ALPHANUMERIC
         - NUM_LENGTH_PRESERVING
         - PFPT
         - RAW_UUID
         - UUID
+        - VGS_FIXED_LEN_GENERIC
       description: |
         Format of the generated alias string.
 
