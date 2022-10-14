@@ -72,5 +72,5 @@ def refresh_token(api, client_id=None, refresh_token=None):
 
 
 def validate_access_token(auth_token):
-    token_json = jwt.decode(auth_token, verify=False)
+    token_json = jwt.decode(auth_token, options={"verify_signature": False})
     return not expired(token_json["exp"])
